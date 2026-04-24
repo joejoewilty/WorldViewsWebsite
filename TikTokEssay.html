@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inside the Algorithm</title>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Georgia, serif;
+      font-size: 17px;
+      line-height: 1.8;
+      color: #1a1a1a;
+      background: #f4f6fb;
+      margin: 0;
+    }
+
+    #top {
+      background: #1a3a72;
+      color: white;
+      padding: 80px 40px 70px;
+      text-align: center;
+    }
+
+    .tag-label {
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.55);
+      margin: 0 0 18px;
+    }
+
+    #top h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: bold;
+      margin: 0 0 16px;
+      line-height: 1.1;
+    }
+
+    .hero-sub {
+      font-style: italic;
+      font-size: 1.1rem;
+      color: rgba(255,255,255,.72);
+      max-width: 520px;
+      margin: 0 auto 24px;
+    }
+
+    .author-line {
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.4);
+      margin: 0;
+    }
+
+    #main-body {
+      max-width: 960px;
+      margin: 0 auto;
+      background: white;
+      padding: 56px 60px;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #1a3a72;
+      border-bottom: 2px solid #1a3a72;
+      padding-bottom: 10px;
+      margin: 56px 0 24px;
+    }
+
+    #main-body h2:first-child { margin-top: 0; }
+
+    h3 {
+      font-size: 1.15rem;
+      font-style: italic;
+      color: #333;
+      margin: 40px 0 10px;
+    }
+
+    p { margin: 0 0 1.4em; }
+
+    .callout, blockquote {
+      background: #edf2fc;
+      border-left: 3px solid #1a3a72;
+      border-radius: 0 4px 4px 0;
+      padding: 16px 22px;
+      margin: 28px 0;
+      color: #333;
+      font-size: .93rem;
+      line-height: 1.65;
+    }
+
+    blockquote { font-style: italic; }
+
+    .callout strong {
+      font-size: 10px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: #1a3a72;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .chart-wrap {
+      background: #f9fafd;
+      border: 1px solid #d8e0f0;
+      border-radius: 6px;
+      padding: 16px;
+      margin: 24px 0;
+    }
+
+    .chart-wrap iframe,
+    .chart-wrap .flourish-embed { display: block; }
+
+    .stat-row {
+      display: flex;
+      margin: 0 0 52px;
+      border: 1px solid #d8e0f0;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #f9fafd;
+    }
+
+    .stat-row span {
+      flex: 1;
+      text-align: center;
+      padding: 18px 12px;
+      font-size: 13px;
+      color: #1a3a72;
+      border-right: 1px solid #d8e0f0;
+    }
+
+    .stat-row span:last-child { border-right: none; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 28px 0;
+      font-size: .9rem;
+    }
+
+    table th {
+      background: #1a3a72;
+      color: white;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: .8rem;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    table td {
+      border-bottom: 1px solid #e8edf8;
+      padding: 10px 14px;
+      vertical-align: top;
+    }
+
+    table tr:last-child td { border-bottom: none; }
+    table tr:nth-child(even) td { background: #f5f8ff; }
+
+    .method-steps ol { padding-left: 22px; }
+    .method-steps li { margin-bottom: 16px; line-height: 1.65; }
+    .method-steps li b { color: #1a3a72; }
+
+    hr { display: none; }
+
+    #refs-section {
+      max-width: 960px;
+      margin: 0 auto;
+      background: #edf2fc;
+      padding: 40px 60px;
+      border-top: 3px solid #1a3a72;
+    }
+
+    #refs-section h3 {
+      font-style: normal;
+      font-size: 1.1rem;
+      margin-top: 0;
+      color: #1a3a72;
+    }
+
+    #refs-section ul { padding-left: 20px; }
+
+    #refs-section li {
+      margin-bottom: 10px;
+      font-size: .85rem;
+      line-height: 1.6;
+      color: #555;
+    }
+
+    #refs-section a { color: #1a3a72; text-decoration: none; }
+    #refs-section a:hover { text-decoration: underline; }
+
+    .footer-strip {
+      background: #1a3a72;
+      color: rgba(255,255,255,.45);
+      text-align: center;
+      padding: 20px;
+      font-size: 11px;
+      letter-spacing: .1em;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 680px) {
+      #main-body, #refs-section { padding: 36px 24px; }
+      #top { padding: 56px 24px 48px; }
+      .stat-row { flex-direction: column; }
+      .stat-row span { border-right: none; border-bottom: 1px solid #d8e0f0; }
+      .stat-row span:last-child { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="top">
+  <p class="tag-label">A Blount Worldviews Project</p>
+  <h1>Inside the Algorithm</h1>
+  <p class="hero-sub">How TikTok advertises to you and quietly narrows your worldview.</p>
+  <p class="author-line">Joseph Wilt &nbsp;·&nbsp; BUI 401-003 &nbsp;·&nbsp; The University of Alabama &nbsp;·&nbsp; 2026</p>
+</div>
+
+<div id="main-body">
+
+  <h2 class="fade-in" id="intro">Introduction</h2>
+
+  <p class="fade-in">
+    TikTok's algorithm does more than just decide what appears in your feed. Over time, it can shape the lens through which you see the world. This project examines how TikTok's recommendation algorithm leverages personal data to deliver increasingly targeted advertising and whether that process might narrow the variety of perspectives a user is exposed to.
+  </p>
+
+  <p class="fade-in">
+    TikTok is obsessed with materialism. Research has shown that TikTok's influencer culture is deeply tied to aspirational materialism: the idea that buying things gets you closer to the life you want. What makes TikTok unique is its use of TikTok Shop, which allows influencers to discreetly advertise products. A creator may casually mention a product during their video without verbally disclosing that they are advertising said product. Any disclosure, if it appears at all, appears in a little corner of the screen that will lead you directly to the shop page for that product. The algorithm uses these implicit ads to make products seem more like recommendations from a friend than carefully targeted marketing.
+  </p>
+
+  <p class="fade-in">
+    My decision to pursue this project comes from my own experiences with TikTok. I had a TikTok account for years and noticed the negative effects it had on my behavior. I bought things impulsively, got frustrated by political content I had not gone looking for, and felt like I was wasting so much time scrolling. It felt like the app was built to keep me scrolling and serve me as many ads as possible. I wanted to test that theory with actual data.
+  </p>
+
+  <p class="fade-in">
+    To do that, I created two new "burner" accounts representing different user types and ran each through three hours of controlled scrolling. I also ran my own established personal account through the same process. Across the three accounts, I logged every ad, noted whether it was openly disclosed (explicit) or disguised as organic content (implicit), and scored how relevant it was to that account's interests. I also tracked the political lean of content over time as a way to better assess how political content is filtered by the algorithm. The charts below, along with some light commentary, explain what I found.
+  </p>
+
+  <hr class="fade-in">
+
+  <h2 class="fade-in" id="methods">Methods</h2>
+
+  <p class="fade-in">
+    Two brand-new burner accounts were set up from scratch, each representing a different type of user based on political lean, gender, and a set of personal interests chosen by a random generator to keep things unbiased. Both underwent three hours of simulated scrolling, all performed in a single sitting. Those results were then compared with data from my own personal TikTok account, which also underwent a three-hour scrolling and data-collection session. VPNs were used throughout, and the accounts never interacted with each other in an effort to avoid cross-contamination.
+  </p>
+
+  <div class="method-steps fade-in">
+    <ol>
+      <li>
+        <b>Account creation:</b> Two burner accounts were built using randomly selected interests to prevent researcher bias. Each started completely fresh with no behavioral data for the algorithm to draw from. Each account was then primed by searching for their interests and scrolling through each search for five minutes.
+      </li>
+      <li>
+        <b>Simulated media consumption:</b> Each account scrolled for three hours total. Interesting content was watched for at least 30 seconds and liked. Uninteresting content was skipped in under 5 seconds. Politically aligned content was liked, while opposing content was not. All political content was watched for at least thirty seconds, with the intention of mimicking how actual users engage with political content.
+      </li>
+      <li>
+        <b>Ad logging:</b> Every ad was recorded with a timestamp and a note on whether it was explicitly labeled as an ad or implicitly embedded into the feed. Each ad also received a relevance score: 0 for not relevant, 0.5 for somewhat relevant, and 1.0 for fully relevant to that account's interests.
+      </li>
+      <li>
+        <b>Political content scoring:</b> Political videos were scored based on hashtags and obvious indicators of political lean: -1 for left-leaning content, 0 for balanced or centrist content, and +1 for right-leaning content.
+      </li>
+    </ol>
+  </div>
+
+  <h3 class="fade-in">The Three Accounts</h3>
+
+  <table class="fade-in">
+    <tr>
+      <th>Account</th>
+      <th>Gender, Location</th>
+      <th>Political Lean</th>
+      <th>Interests</th>
+    </tr>
+    <tr>
+      <td>Burner Account 01</td>
+      <td>Female, Virginia</td>
+      <td>Left</td>
+      <td>Reading, Climbing</td>
+    </tr>
+    <tr>
+      <td>Burner Account 02</td>
+      <td>Male, Texas</td>
+      <td>Right</td>
+      <td>Architecture, Gaming</td>
+    </tr>
+    <tr>
+      <td>Personal Account</td>
+      <td>Male, Alabama</td>
+      <td>Left</td>
+      <td>Various Interests</td>
+    </tr>
+  </table>
+
+  <hr class="fade-in">
+
+  <h2 class="fade-in" id="findings">Findings</h2>
+
+  <h3 class="fade-in">The established account saw by far the most ads.</h3>
+  <p class="fade-in">
+    Before looking at what kinds of ads each account received, it is worth looking at the sheer volume of ads seen. My personal account, with years of behavioral data behind it, saw 96 ads across three hours. The two new burner accounts saw an average of 29 ads each. That means the established account saw three times as many ads as the burner accounts. There are many possible explanations for this large difference between accounts, the most plausible being that new accounts are shown less ads in order to make them more comfortable using TikTok. This keeps them more engaged and more likely to get "addicted" to scrolling.
+  </p>
+  <div class="chart-wrap fade-in">
+    <iframe src='https://flo.uri.sh/visualisation/28597273/embed' title='Total ads per account' frameborder='0' scrolling='no' style='width:100%;height:500px;'></iframe>
+  </div>
+  <div class="callout fade-in">
+    <strong>Key Finding</strong>
+    Established accounts with complex behavioral histories are shown significantly more ads per hour than new accounts. New accounts may be shown fewer ads on purpose to avoid deterring them from scrolling. Overall, it seems that the more TikTok knows about you, the more comfortable it is placing targeted ads in your feed.
+  </div>
+
+  <h3 class="fade-in">A lot of ads don't look like ads at all.</h3>
+  <p class="fade-in">
+    Not all advertising on TikTok looks the same. Some ads are clearly labeled with an "ad" tag in the bottom left corner, while others are blended into the feed as if they were normal content. On the new burner accounts, the majority of ads were explicitly disclosed. On my personal account, however, nearly six in ten ads were implicit, with no verbal disclosure to indicate they were advertisements.
+  </p>
+  <div class="chart-wrap fade-in">
+    <div class="flourish-embed flourish-chart" data-src="visualisation/28596984"><script src="https://public.flourish.studio/resources/embed.js"></script><noscript><img src="https://public.flourish.studio/visualisation/28596984/thumbnail" width="100%" alt="Explicit vs implicit advertising by account"/></noscript></div>
+  </div>
+  <p class="fade-in">This data relates directly to materialism on TikTok. When advertising is framed as regular content rather than a sales pitch, the skepticism that usually comes with seeing an ad is removed. TikTok Shop promotions and creator endorsements encourage materialism because influencers promote a happy lifestyle based on material products that they endorse.</p>
+  <div class="callout fade-in">
+    <strong>Key Finding</strong>
+    The established account saw significantly more undisclosed advertising than either of the new accounts. This raises the question of whether TikTok uses implicit ads more heavily once it has enough data to know what a user is likely to respond to, or if they simply avoid these types of ads until a user has grown used to the explicit ad model.
+  </div>
+
+  <h3 class="fade-in">New accounts were targeted more precisely, and quickly.</h3>
+  <p class="fade-in">
+    The established account saw more ads, and more of them were implicit. However, many of them were not well targeted. This chart compares the average relevance score across all ads for each account. Surprisingly, the burner accounts scored higher on relevance (around 0.45 to 0.46) than my personal account (0.22), even though they had far less data behind them.
+  </p>
+  <div class="chart-wrap fade-in">
+    <div class="flourish-embed flourish-chart" data-src="visualisation/28596951"><script src="https://public.flourish.studio/resources/embed.js"></script><noscript><img src="https://public.flourish.studio/visualisation/28596951/thumbnail" width="100%" alt="Average ad relevance score per account"/></noscript></div>
+  </div>
+  <p class="fade-in">The counterintuitive result here might come down to the simplicity of my research design. The burner accounts were each built around just two interests, giving the algorithm very clear targets to work with. My personal account's years of varied and sometimes contradictory engagement may have created a messier profile that is harder to target precisely, even with far more data available.</p>
+  <div class="callout fade-in">
+    <strong>Key Finding</strong>
+    TikTok can build a reasonably accurate advertising profile from just a handful of interests within a single session. More research is necessary to parse out whether or not a complex user profile actually leads to worse targeted advertising.
+  </div>
+
+  <h3 class="fade-in">The algorithm learns quickly, even over a single session</h3>
+  <p class="fade-in">
+    The overall averages in the chart above tell one part of the story, but a more interesting picture emerges when you look at how relevance changed over the course of each session. Across all three accounts, ad relevance trended upwards as the hours went on, although this upward trend was not linear. The algorithm started with very little information and quickly focused on what each user seemed to care about.
+  </p>
+  <div class="chart-wrap fade-in">
+    <iframe src='https://flo.uri.sh/visualisation/28600229/embed' title='Ad relevance over time' frameborder='0' scrolling='no' style='width:100%;height:500px;'></iframe>
+  </div>
+  <p class="fade-in">The algorithm had to actively learn throughout each burner account's session, as there was no pre-existing profile to target ads off of. It could only rely on behavioral signals such as how long I paused, whether I replayed something, what I liked, and what I skipped past.</p>
+  <div class="callout fade-in">
+    <strong>Key Finding</strong>
+    Ad relevance increased measurably within a single 3-hour session across all three accounts. Therefore, advertisement tailoring does not take a long time to perform. TikTok's algorithm adapts in real time, whether scrolling on a brand-new account or a previously established one.
+  </div>
+
+  <h3 class="fade-in">Each account's political feed drifted toward its pre-determined political lean.</h3>
+  <p class="fade-in">
+    Advertising is not the only thing the algorithm tailors to each account, as political content followed a similar pattern. The pie charts below show the breakdown of political content seen by each account across the 3-hour session. Content was tagged as left-leaning, right-leaning, or balanced based on the hashtags or the creators associated with each video.
+  </p>
+  <div class="chart-wrap fade-in">
+    <div class="flourish-embed flourish-chart" data-src="visualisation/28597346"><script src="https://public.flourish.studio/resources/embed.js"></script><noscript><img src="https://public.flourish.studio/visualisation/28597346/thumbnail" width="100%" alt="Political content breakdown by account"/></noscript></div>
+  </div>
+  <p class="fade-in">The left-leaning accounts ended up seeing a majority of left-leaning political content, while the right-leaning account's feed skewed the other way. My established personal account showed the strongest lean of all, with an average political score of -0.952, reflecting years of consistent engagement with left-leaning content. The algorithm also seemed more comfortable with showing me political content, as my personal account saw more than twice the number of political posts than either of the burner accounts. Regardless, with all three accounts the algorithm reinforced an existing worldview rather than introducing new perspectives.</p>
+  <div class="callout fade-in">
+    <strong>Key Finding</strong>
+    TikTok's algorithm keeps users engaged by showing them politically relevant content. Each account's feed narrowed toward its pre-determined political lean over the course of the session, with the established account showing by far the strongest ideological skew.
+  </div>
+
+  <hr class="fade-in">
+
+  <h2 class="fade-in" id="conclusion">Conclusion</h2>
+  <h3 class="fade-in">A limited worldview, sold back to you.</h3>
+
+  <p class="fade-in">
+    Taken together, the five charts tell a fairly consistent story. TikTok's algorithm serves more ads to users it knows better. It learns fast, becoming more targeted within a single session even on a brand-new account. On established accounts, it leans heavily on implicit advertising that blends in with the rest of the feed. And on the political side, it progressively narrows the range of perspectives each account is exposed to, reinforcing rather than challenging existing worldviews.
+  </p>
+
+  <p class="fade-in">
+    One thing this project contributes that is not well-covered in existing research is a direct comparison between brand-new accounts and an older, well-established one. The differences I found were surprising and very interesting. A fresh account gets more precisely targeted ads within hours, but fewer of them. An established account gets shown more ads, but most of them were disguised as regular content. The established account also showed a stronger ideological skew. Both patterns reflect the same algorithmic logic: keep users engaged, show them content that confirms what they already believe, and serve ads that feel natural rather than intrusive.
+  </p>
+
+  <p class="fade-in">
+    It is important to note that there are limitations to this research. The sample is small, the accounts are controlled simulations rather than real users' profiles, and the relevance scoring is deliberately simple. A larger study involving real participants and long-term account data would produce more robust conclusions. Regardless, this project suggests that TikTok's algorithm can build and reinforce a commercial and ideological profile surprisingly quickly.
+  </p>
+
+  <p class="fade-in">
+    The influence algorithms have on our worldview is what matters most in the long run. If what we see shapes what we think, and what we see is decided by an algorithm optimizing for engagement and ad revenue, then our sense of the world around us is at least partly not our own. Getting curious about that process, and understanding what it amplifies and what it quietly filters out, seems like a pretty reasonable place to start.
+  </p>
+
+</div>
+
+<div id="refs-section" class="fade-in">
+  <h3 id="references">References</h3>
+  <ul>
+    <li>Baptista, E. (2025, December 22). What is so special about TikTok's algorithm? <em>Reuters</em>. <a href="https://www.reuters.com/sustainability/boards-policy-regulation/what-is-so-special-about-tiktoks-algorithm-2025-12-20/" target="_blank">https://www.reuters.com/sustainability/...</a></li>
+    <li>Beer, D. (2017). The social power of algorithms. <em>Information, Communication &amp; Society, 20</em>(1), 1–13. <a href="https://doi.org/10.1080/1369118X.2016.1216147" target="_blank">https://doi.org/10.1080/1369118X.2016.1216147</a></li>
+    <li>Benaminute. (2024, August 16). I let YouTube autoplay until it turned me alt-right. <em>YouTube</em>. <a href="https://www.youtube.com/watch?v=_7MudsS4WMA" target="_blank">https://www.youtube.com/watch?v=_7MudsS4WMA</a></li>
+    <li>Bozdag, E. (2013). Bias in algorithmic filtering and personalization. <em>Ethics and Information Technology, 15</em>(3), 209–227. <a href="https://doi.org/10.1007/s10676-013-9321-6" target="_blank">https://doi.org/10.1007/s10676-013-9321-6</a></li>
+    <li>Byun, K. J., &amp; Ahn, S. J. (Grace). (2023). A systematic review of virtual influencers. <em>Journal of Interactive Advertising, 23</em>(4), 293–306. <a href="https://doi.org/10.1080/15252019.2023.2236102" target="_blank">https://doi.org/10.1080/15252019.2023.2236102</a></li>
+    <li>Chen, W., Pacheco, D., Yang, K. C., &amp; Menczer, F. (2021). Neutral bots probe political bias on social media. <em>Nature Communications, 12</em>(1), 5580. <a href="https://doi.org/10.1038/s41467-021-25738-6" target="_blank">https://doi.org/10.1038/s41467-021-25738-6</a></li>
+    <li>Ding, Q. S., &amp; Tabari, S. (2024). Influencers, materialism, mental health and sustainability. In <em>Celebrity, social media influencers and brand performance</em>. Palgrave Macmillan. <a href="https://doi.org/10.1007/978-3-031-63516-8_10" target="_blank">https://doi.org/10.1007/978-3-031-63516-8_10</a></li>
+    <li>Jacobs, S. (2026, January 26). TikTok quietly expands location tracking and ad targeting for US users. <em>TechSpot</em>. <a href="https://www.techspot.com/news/111061-tiktok-quietly-expands-ad-targeting-location-tracking-us.html" target="_blank">https://www.techspot.com/news/111061-...</a></li>
+    <li>Kieserman, J., et al. (2026). Reckless designs and broken promises: Privacy implications of targeted interactive advertisements. <a href="https://doi.org/10.48550/arXiv.2603.03659" target="_blank">https://doi.org/10.48550/arXiv.2603.03659</a></li>
+    <li>Li, Y., Cheng, Z., &amp; Gil de Zúñiga, H. (2025). TikTok's political landscape: Examining echo chambers. <em>New Media &amp; Society</em>. <a href="https://doi.org/10.1177/14614448251339755" target="_blank">https://doi.org/10.1177/14614448251339755</a></li>
+    <li>Lu, Z. (2024). Personalized marketing and recommendation systems on TikTok. <em>Advances in Economics, Management and Political Sciences, 88</em>, 46–50. <a href="https://doi.org/10.54254/2754-1169/88/20240874" target="_blank">https://doi.org/10.54254/2754-1169/88/20240874</a></li>
+    <li>Riedl, M. J., Lukito, J., &amp; Woolley, S. C. (2023). Political influencers on social media. <em>Social Media + Society, 9</em>(2). <a href="https://doi.org/10.1177/20563051231177938" target="_blank">https://doi.org/10.1177/20563051231177938</a></li>
+    <li>Shamsuddin, A. S., &amp; Azman, E. A. (2025). The impact of TikTok video advertisements on Generation Z's purchase intentions. <em>Journal of Contemporary Management Studies, 1</em>(1), 13–23. <a href="https://doi.org/10.11113/" target="_blank">https://doi.org/10.11113/</a></li>
+    <li>Sultana, N., et al. (2025). Invisible influence: How algorithms are redefining advertising. <em>International Research Journal on Advanced Science Hub, 7</em>(8). <a href="https://doi.org/10.47392/IRJASH.2025.080" target="_blank">https://doi.org/10.47392/IRJASH.2025.080</a></li>
+    <li>The Pudding. (n.d.). <em>The Pudding</em>. <a href="https://pudding.cool" target="_blank">https://pudding.cool</a></li>
+  </ul>
+</div>
+
+<div class="footer-strip">
+  Inside the Algorithm — A Visual Essay on TikTok's Recommendation System &nbsp;·&nbsp; Joseph Wilt &nbsp;·&nbsp; BUI 401-003 &nbsp;·&nbsp; The University of Alabama &nbsp;·&nbsp; 2026
+</div>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
